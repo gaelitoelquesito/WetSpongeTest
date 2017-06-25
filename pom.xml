@@ -63,9 +63,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>es.minetsii</groupId>
+            <groupId>com.degoos</groupId>
             <artifactId>WetSponge</artifactId>
-            <version>0.1-ALPHA</version>
+            <version>LATEST</version>
         </dependency></dependencies>
 
 </project>

@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.degoos:WetSponge:0.7.3-ALPHA">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/degoos/WetSponge/0.7.3-ALPHA/WetSponge-0.7.3-ALPHA.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/degoos/WetSponge/0.7.3-ALPHA/WetSponge-0.7.3-ALPHA-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/degoos/WetSponge/0.7.3-ALPHA/WetSponge-0.7.3-ALPHA-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
