@@ -23,7 +23,8 @@ public class WetSpongeTest extends WSPlugin {
 
     @WSListener
     public void onPlayerJoin(WSPlayerJoinEvent event) {
-        event.getPlayer().sendMessage(WSText.builder("A").newLine().append(WSText.of("B")).build());
+        event.getPlayer().sendMessage(WSText.builder("&aA").translateColors().center().newLine()
+                .append(WSText.builder("&cB").translateColors().center().build()).build());
     }
 
 }
