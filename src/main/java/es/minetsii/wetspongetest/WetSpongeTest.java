@@ -4,88 +4,63 @@ package es.minetsii.wetspongetest;
 import com.degoos.wetsponge.WetSponge;
 import com.degoos.wetsponge.command.WSCommand;
 import com.degoos.wetsponge.command.WSCommandSource;
+import com.degoos.wetsponge.entity.living.animal.WSCow;
+import com.degoos.wetsponge.entity.living.animal.WSPig;
+import com.degoos.wetsponge.entity.living.monster.WSCreeper;
 import com.degoos.wetsponge.entity.living.player.WSPlayer;
-import com.degoos.wetsponge.enums.EnumEnvironment;
 import com.degoos.wetsponge.enums.EnumTextColor;
-import com.degoos.wetsponge.material.blockType.WSBlockType;
-import com.degoos.wetsponge.material.blockType.WSBlockTypes;
 import com.degoos.wetsponge.plugin.WSPlugin;
 import com.degoos.wetsponge.text.WSText;
-import com.degoos.wetsponge.world.*;
-
+import java.util.ArrayList;
 import java.util.List;
 
 public class WetSpongeTest extends WSPlugin {
 
-    private WSWorld world;
+	private static WetSpongeTest instance;
 
-    @Override
-    public void onEnable() {
-        WetSponge.getEventManager().registerListener(this, this);
-        WSWorldProperties worldProperties = new UnlinkedWorldProperties("Test");
-        worldProperties.setGenerateSpawnOnLoad(false);
-        world = WetSponge.getServer().createWorld(worldProperties, EnumEnvironment.OVERWORLD).orElseThrow(NullPointerException::new);
-        world.getGenerator().setBaseGenerationPopulator((world, volume) -> {
-            for (int x = volume.getBlockMin().getX(); x <= volume.getBlockMax().getX(); x++)
-                for (int z = volume.getBlockMin().getZ(); z <= volume.getBlockMax().getZ(); z++)
-                    for (int y = 0; y < 5; y++) {
-                        WSBlockType type;
-                        switch (y) {
-                            case 0:
-                                type = WSBlockTypes.BEDROCK.getDefaultType();
-                                break;
-                            case 1:
-                            case 2:
-                            case 3:
-                                type = WSBlockTypes.DIRT.getDefaultType();
-                                break;
-                            case 4:
-                                type = WSBlockTypes.GRASS.getDefaultType();
-                                break;
-                            default:
-                                type = WSBlockTypes.AIR.getDefaultType();
-                                break;
-                        }
-                        volume.setBlock(x, y, z, type);
-                    }
-        });
-        world.setAutoSave(false);
+	@Override
+	public void onEnable() {
+		instance = this;
+		WetSponge.getEventManager().registerListener(this, this);
 
-        WetSponge.getCommandManager().addCommand(new WSCommand("tpToWorld", "Tp to world", "ttw") {
-            @Override
-            public void executeCommand(WSCommandSource commandSource, String command, String[] arguments) {
-                if (commandSource instanceof WSPlayer)
-                    ((WSPlayer) commandSource).setLocation(WSLocation.of(world, 0, 4, 0));
-            }
+		WetSponge.getCommandManager().addCommand(new WSCommand("wsSend", "test") {
+			@Override
+			public void executeCommand(WSCommandSource commandSource, String command, String[] arguments) {
+				if (!(commandSource instanceof WSPlayer)) return;
+				WSPlayer player = (WSPlayer) commandSource;
+				new SParachute(player);
+			}
 
-            @Override
-            public List<String> sendTab(WSCommandSource commandSource, String command, String[] arguments) {
-                return null;
-            }
-        });
+			@Override
+			public List<String> sendTab(WSCommandSource commandSource, String command, String[] arguments) {
+				return new ArrayList<>();
+			}
+		});
 
-        WetSponge.getCommandManager().addCommand(new WSCommand("unloadChunk", "Unload Chunk", "ttw") {
-            @Override
-            public void executeCommand(WSCommandSource commandSource, String command, String[] arguments) {
-                if (commandSource instanceof WSPlayer) {
-                    WSPlayer player = (WSPlayer) commandSource;
-                    WSChunk chunk = player.getWorld().getChunkAtLocation(player.getLocation().getBlockX(), player.getLocation().getBlockZ());
-                    player.sendMessage("Unloaded: "+chunk.unload());
-                }
-            }
+		WetSponge.getCommandManager().addCommand(new WSCommand("test", "test") {
+			@Override
+			public void executeCommand(WSCommandSource commandSource, String command, String[] arguments) {
+				if (!(commandSource instanceof WSPlayer)) return;
+				WSPlayer player = (WSPlayer) commandSource;
+				player.getWorld().spawnEntity(WSCreeper.class, player.getLocation().toVector3d()).ifPresent(creeper -> {
+					player.getWorld().spawnEntity(WSCow.class, player.getLocation().toVector3d()).ifPresent(creeper::addPassenger);
+					player.getWorld().spawnEntity(WSPig.class, player.getLocation().toVector3d()).ifPresent(creeper::addPassenger);
+				});
+			}
 
-            @Override
-            public List<String> sendTab(WSCommandSource commandSource, String command, String[] arguments) {
-                return null;
-            }
-        });
-    }
+			@Override
+			public List<String> sendTab(WSCommandSource commandSource, String command, String[] arguments) {
+				return new ArrayList<>();
+			}
+		});
+	}
 
+	public static WetSpongeTest getInstance() {
+		return instance;
+	}
 
-    @Override
-    public void onDisable() {
-        WetSponge.getServer().getConsole().sendMessage(WSText.builder("Goodbye!").color(EnumTextColor.RED).build());
-    }
-
-
+	@Override
+	public void onDisable() {
+		WetSponge.getServer().getConsole().sendMessage(WSText.builder("Goodbye!").color(EnumTextColor.RED).build());
+	}
 }
